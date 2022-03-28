@@ -6,6 +6,8 @@
   "scripts": {
     "lint": "eslint src",
     "build": "npm run v:patch && webpack --env.production",
+    "deploy": "npm version patch && npm run deploy:app",
+    "deploy:app": "npm run build && npm publish ./ --access public",
     "v:patch": "npm version --no-git-tag-version patch",
     "start": "webpack-dev-server --open --progress --colors"
   },
