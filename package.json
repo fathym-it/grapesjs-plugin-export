@@ -1,6 +1,6 @@
 {
   "name": "@fathym-it/grapesjs-plugin-export",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Export GrapesJS templates to ZIP",
   "main": "dist/@fathym-it/grapesjs-plugin-export.min.js",
   "scripts": {
