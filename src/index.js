@@ -8,7 +8,7 @@ export default (editor, opts = {}) => {
 
   let config = {
     addExportBtn: 1,
-    btnLabel: 'Export to ZIP',
+    btnLabel: !opts.sendToUrl ? 'Export to ZIP' : 'Export to URL',
     filenamePfx: 'grapesjs_template',
     filename: null,
     root: {
