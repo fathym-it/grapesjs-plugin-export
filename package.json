@@ -2,7 +2,7 @@
   "name": "@fathym-it/grapesjs-plugin-export",
   "version": "0.0.16",
   "description": "Export GrapesJS templates to ZIP",
-  "main": "dist/grapesjs-plugin-export.min.js",
+  "main": "dist/@fathym-it/grapesjs-plugin-export.min.js",
   "scripts": {
     "lint": "eslint src",
     "build": "npm run v:patch && webpack --env.production",
