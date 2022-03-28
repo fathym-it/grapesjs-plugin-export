@@ -13,9 +13,9 @@ export default (editor, opts = {}) => {
     filename: null,
     root: {
       css: {
-        'style.css': ed => ed.getCss(),
+        'style.css': (ed) => ed.getCss(),
       },
-      'index.html': ed =>
+      'index.html': (ed) =>
         `<!doctype html>
         <html lang="en">
           <head>
@@ -38,17 +38,18 @@ export default (editor, opts = {}) => {
     createFile(zip, name, content) {
       const opts = {};
       const ext = name.split('.')[1];
-      const isBinary = config.isBinary ?
-        config.isBinary(content, name) :
-        !(ext && ['html', 'css'].indexOf(ext) >= 0) &&
-        !/^[\x00-\x7F]*$/.test(content);
+      const isBinary = config.isBinary
+        ? config.isBinary(content, name)
+        : !(ext && ['html', 'css'].indexOf(ext) >= 0) &&
+          !/^[\x00-\x7F]*$/.test(content);
 
       if (isBinary) {
         opts.binary = true;
       }
 
-      editor.log(['Create file', { name, content, opts }],
-        { ns: 'plugin-export' });
+      editor.log(['Create file', { name, content, opts }], {
+        ns: 'plugin-export',
+      });
 
       zip.file(name, content, opts);
     },
@@ -59,7 +60,8 @@ export default (editor, opts = {}) => {
       for (const name in root) {
         if (root.hasOwnProperty(name)) {
           let content = root[name];
-          content = typeof content === 'function' ? await content(editor) : content;
+          content =
+            typeof content === 'function' ? await content(editor) : content;
           const typeOf = typeof content;
 
           if (typeOf === 'string') {
@@ -75,15 +77,27 @@ export default (editor, opts = {}) => {
     run(editor) {
       const zip = new JSZip();
       this.createDirectory(zip, config.root).then(() => {
-        zip.generateAsync({ type: 'blob' })
-        .then(content => {
+        zip.generateAsync({ type: 'blob' }).then((content) => {
           const filenameFn = config.filename;
-          let filename = filenameFn ?
-            filenameFn(editor) : `${config.filenamePfx}_${Date.now()}.zip`;
-          FileSaver.saveAs(content, filename);
+          let filename = filenameFn
+            ? filenameFn(editor)
+            : `${config.filenamePfx}_${Date.now()}.zip`;
+
+          if (!config.sendToUrl) {
+            FileSaver.saveAs(content, filename);
+          } else {
+            fetch(config.sendToUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type':
+                  config.sendToContentType || 'multipart/form-data',
+              },
+              body: content,
+            });
+          }
         });
       });
-    }
+    },
   });
 
   // Add button inside export dialog
